@@ -20,10 +20,7 @@ class exports.Parser extends events.EventEmitter
     # if this was called without 'new', create an instance with new and return
     return new exports.Parser opts unless @ instanceof exports.Parser
     # copy this versions default options
-    @options = {}
-    @options[key] = value for own key, value of defaults["0.2"]
-    # overwrite them with the specified options, if any
-    @options[key] = value for own key, value of opts
+    @options = Object.assign({}, defaults["0.2"], opts)
     # define the key used for namespaces
     if @options.xmlns
       @options.xmlnskey = @options.attrkey + "ns"
