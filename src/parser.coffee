@@ -130,7 +130,7 @@ class exports.Parser extends events.EventEmitter
         cdata = obj.cdata
         delete obj.cdata
 
-      s = stack[stack.length - 1]
+      s = stack.length > 0 and stack[stack.length - 1]
       # remove the '#' key altogether if it's blank
       if obj[charkey].match(/^\s*$/) and not cdata
         emptyStr = obj[charkey]
