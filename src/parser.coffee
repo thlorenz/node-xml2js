@@ -15,12 +15,50 @@ processItem = (processors, item, key) ->
   item = process(item, key) for process in processors
   return item
 
+class Options
+  constructor: (opts) ->
+    @explicitCharkey = opts.explicitCharkey or false
+    @trim = opts.trim or false
+    @normalize = opts.normalize or false
+    @normalizeTags = opts.normalizeTags or false
+    @attrkey = opts.attrkey or "$"
+    @charkey = opts.charkey or "_"
+    @explicitArray = opts.explicitArray or true
+    @ignoreAttrs = opts.ignoreAttrs or false
+    @mergeAttrs = opts.mergeAttrs or false
+    @explicitRoot = opts.explicitRoot or true
+    @validator = opts.validator or null
+    @xmlns  = opts.xmlns or false
+    @explicitChildren = opts.explicitChildren or false
+    @preserveChildrenOrder = opts.preserveChildrenOrder or false
+    @childkey = opts.childkey or '$$'
+    @charsAsChildren = opts.charsAsChildren or false
+    # include white-space only text nodes
+    @includeWhiteChars = opts.includeWhiteChars or false
+    # not async in 0.2 mode either
+    @async = opts.async or false
+    @strict = opts.strict or true
+    @attrNameProcessors = opts.attrNameProcessors or null
+    @attrValueProcessors = opts.attrValueProcessors or null
+    @tagNameProcessors = opts.tagNameProcessors or null
+    @valueProcessors = opts.valueProcessors or null
+    # xml building options
+    @rootName = opts.rootName or 'root'
+    @xmldec = opts.xmldec or {'version': '1.0', 'encoding': 'UTF-8', 'standalone': true}
+    @doctype = opts.doctype or null
+    @renderOpts = opts.renderOpts or { 'pretty': true, 'indent': '  ', 'newline': '\n' }
+    @headless = opts.headless or false
+    @chunkSize = opts.chunkSize or 10000
+    @emptyTag = opts.emptyTag or ''
+    @cdata = opts.cdata or false
+
 class exports.Parser extends events.EventEmitter
   constructor: (opts) ->
     # if this was called without 'new', create an instance with new and return
     return new exports.Parser opts unless @ instanceof exports.Parser
     # copy this versions default options
-    @options = Object.assign({}, defaults["0.2"], opts)
+    @options = new Options(opts)
+
     # define the key used for namespaces
     if @options.xmlns
       @options.xmlnskey = @options.attrkey + "ns"
