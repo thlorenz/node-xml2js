@@ -31,7 +31,7 @@ class exports.Parser extends events.EventEmitter
 
     @reset()
 
-  processAsync: =>
+  processAsync: ->
     try
       if @remaining.length <= @options.chunkSize
         chunk = @remaining
@@ -42,13 +42,13 @@ class exports.Parser extends events.EventEmitter
         chunk = @remaining.substr 0, @options.chunkSize
         @remaining = @remaining.substr @options.chunkSize, @remaining.length
         @saxParser = @saxParser.write chunk
-        setImmediate @processAsync
+        setImmediate () => @processAsync()
     catch err
       if ! @saxParser.errThrown
         @saxParser.errThrown = true
         @emit err
 
-  assignOrPush: (obj, key, newValue) =>
+  assignOrPush: (obj, key, newValue) ->
     if key not of obj
       if not @options.explicitArray
         obj[key] = newValue
@@ -58,7 +58,7 @@ class exports.Parser extends events.EventEmitter
       obj[key] = [obj[key]] if not (obj[key] instanceof Array)
       obj[key].push newValue
 
-  reset: =>
+  reset: ->
     # remove all previous listeners for events, to prevent event listener
     # accumulation
     @removeAllListeners()
@@ -222,7 +222,7 @@ class exports.Parser extends events.EventEmitter
       if s
         s.cdata = true
 
-  parseString: (str, cb) =>
+  parseString: (str, cb) ->
     if cb? and typeof cb is "function"
       @on "end", (result) ->
         @reset()
@@ -240,7 +240,7 @@ class exports.Parser extends events.EventEmitter
       str = bom.stripBOM str
       if @options.async
         @remaining = str
-        setImmediate @processAsync
+        setImmediate () => @processAsync()
         return @saxParser
       @saxParser.write(str).close()
     catch err
